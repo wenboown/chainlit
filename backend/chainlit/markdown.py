@@ -37,19 +37,26 @@ def init_markdown(root: str):
 def get_markdown_str(root: str, language: str) -> Optional[str]:
     """Get the chainlit.md file as a string."""
     root_path = Path(root)
-    translated_chainlit_md_path = root_path / f"chainlit_{language}.md"
     default_chainlit_md_path = root_path / "chainlit.md"
 
-    if (
-        is_path_inside(translated_chainlit_md_path, root_path)
-        and translated_chainlit_md_path.is_file()
-    ):
-        chainlit_md_path = translated_chainlit_md_path
+    # Split the language code to get the general language
+    general_language = language.split('-')[0]
+
+    # Define paths for specific and general language files
+    specific_chainlit_md_path = root_path / f"chainlit_{language}.md"
+    general_chainlit_md_path = root_path / f"chainlit_{general_language}.md"
+
+    # Check for specific language file
+    if is_path_inside(specific_chainlit_md_path, root_path) and specific_chainlit_md_path.is_file():
+        chainlit_md_path = specific_chainlit_md_path
+    # Check for general language file
+    elif is_path_inside(general_chainlit_md_path, root_path) and general_chainlit_md_path.is_file():
+        chainlit_md_path = general_chainlit_md_path
+        logger.info(f"Specific language file for {language} not found. Using {general_language} version.")
+    # Fall back to default
     else:
         chainlit_md_path = default_chainlit_md_path
-        logger.warning(
-            f"Translated markdown file for {language} not found. Defaulting to chainlit.md."
-        )
+        logger.warning(f"Language-specific markdown file for {language} or {general_language} not found. Defaulting to chainlit.md.")
 
     if chainlit_md_path.is_file():
         return chainlit_md_path.read_text(encoding="utf-8")
