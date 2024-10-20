@@ -17,7 +17,9 @@ import Dialog from 'components/atoms/Dialog';
 import { AccentButton } from 'components/atoms/buttons/AccentButton';
 import { TextInput } from 'components/atoms/inputs';
 
-import MessageBubbleIcon from 'assets/messageBubble';
+import MessageBubbleIcon, {
+  MessageBubbleFilledIcon
+} from 'assets/messageBubble';
 import {
   ThumbDownFilledIcon,
   ThumbDownIcon,
@@ -55,6 +57,8 @@ const FeedbackButtons = ({ message }: Props) => {
 
   const DownIcon = feedback === -1 ? ThumbDownFilledIcon : ThumbDownIcon;
   const UpIcon = feedback === 1 ? ThumbUpFilledIcon : ThumbUpIcon;
+  const BubbleIcon =
+    feedback === 0 ? MessageBubbleFilledIcon : MessageBubbleIcon;
 
   const handleFeedbackChanged = (feedback?: number, comment?: string) => {
     if (feedback === undefined) {
@@ -139,7 +143,7 @@ const FeedbackButtons = ({ message }: Props) => {
               className={`neutral-feedback-${feedback === 0 ? 'on' : 'off'}`}
               onClick={() => handleFeedbackClick(0)}
             >
-              <MessageBubbleIcon sx={iconSx} />
+              <BubbleIcon sx={iconSx} />
             </IconButton>
           </span>
         </Tooltip>
@@ -161,7 +165,7 @@ const FeedbackButtons = ({ message }: Props) => {
     ];
 
     return baseButtons;
-  }, [feedback, disabled]);
+  }, [feedback, disabled, UpIcon, BubbleIcon, DownIcon]);
 
   return (
     <>

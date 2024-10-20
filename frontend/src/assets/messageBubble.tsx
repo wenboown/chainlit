@@ -1,6 +1,6 @@
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 
-const MessageBubbleIcon = (props: SvgIconProps) => {
+export const MessageBubbleIcon = (props: SvgIconProps) => {
   return (
     <SvgIcon>
       <svg
@@ -12,7 +12,23 @@ const MessageBubbleIcon = (props: SvgIconProps) => {
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />{' '}
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+      </svg>
+    </SvgIcon>
+  );
+};
+
+export const MessageBubbleFilledIcon = (props: SvgIconProps) => {
+  return (
+    <SvgIcon>
+      <svg
+        {...props}
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
       </svg>
     </SvgIcon>
   );
