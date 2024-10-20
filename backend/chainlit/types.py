@@ -245,7 +245,7 @@ class FeedbackDict(TypedDict):
 @dataclass
 class Feedback:
     forId: str
-    value: Literal[0, 1]
+    value: Literal[-1, 0, 1]
     threadId: Optional[str] = None
     id: Optional[str] = None
     comment: Optional[str] = None
