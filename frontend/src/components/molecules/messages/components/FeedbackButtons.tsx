@@ -44,6 +44,11 @@ const FeedbackButtons = ({ message }: Props) => {
   const [feedback, setFeedback] = useState(message.feedback?.value);
   const [comment, setComment] = useState(message.feedback?.comment);
 
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [_pendingFeedbackRemoval, setPendingFeedbackRemoval] = useState<
+    number | undefined
+  >();
+
   if (!config.config?.dataPersistence) {
     return null;
   }
@@ -83,7 +88,12 @@ const FeedbackButtons = ({ message }: Props) => {
 
   const handleFeedbackClick = (nextValue: number) => {
     if (feedback === nextValue) {
-      handleFeedbackChanged(undefined);
+      if (comment) {
+        setShowConfirmDialog(true);
+        setPendingFeedbackRemoval(nextValue);
+      } else {
+        handleFeedbackChanged(undefined);
+      }
     } else {
       setShowFeedbackDialog(nextValue);
     }
@@ -209,6 +219,28 @@ const FeedbackButtons = ({ message }: Props) => {
           >
             Submit feedback
           </AccentButton>
+        }
+      />
+
+      <Dialog
+        open={showConfirmDialog}
+        onClose={() => setShowConfirmDialog(false)}
+        title="Remove Feedback"
+        content="Are you sure you want to remove your feedback and associated comment?"
+        actions={
+          <>
+            <AccentButton onClick={() => setShowConfirmDialog(false)}>
+              Cancel
+            </AccentButton>
+            <AccentButton
+              onClick={() => {
+                handleFeedbackChanged(undefined);
+                setShowConfirmDialog(false);
+              }}
+            >
+              Confirm
+            </AccentButton>
+          </>
         }
       />
     </>
