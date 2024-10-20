@@ -168,10 +168,12 @@ class InputAudioChunk:
     elapsedTime: float
     data: bytes
 
+
 class OutputAudioChunk(TypedDict):
     track: str
     mimeType: str
     data: bytes
+
 
 @dataclass
 class AskFileResponse:
@@ -236,7 +238,7 @@ FeedbackStrategy = Literal["BINARY"]
 class FeedbackDict(TypedDict):
     forId: str
     id: Optional[str]
-    value: Literal[0, 1]
+    value: Literal[-1, 0, 1]
     comment: Optional[str]
 
 

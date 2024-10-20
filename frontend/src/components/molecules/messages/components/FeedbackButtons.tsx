@@ -53,7 +53,7 @@ const FeedbackButtons = ({ message }: Props) => {
     return null;
   }
 
-  const DownIcon = feedback === 0 ? ThumbDownFilledIcon : ThumbDownIcon;
+  const DownIcon = feedback === -1 ? ThumbDownFilledIcon : ThumbDownIcon;
   const UpIcon = feedback === 1 ? ThumbUpFilledIcon : ThumbUpIcon;
 
   const handleFeedbackChanged = (feedback?: number, comment?: string) => {
@@ -87,7 +87,11 @@ const FeedbackButtons = ({ message }: Props) => {
   };
 
   const handleFeedbackClick = (nextValue: number) => {
-    if (feedback === nextValue) {
+    if (nextValue === 0) {
+      // Open comment dialog for neutral feedback
+      setShowFeedbackDialog(0);
+      setCommentInput(comment || undefined);
+    } else if (feedback === nextValue) {
       if (comment) {
         setShowConfirmDialog(true);
         setPendingFeedbackRemoval(nextValue);
@@ -96,6 +100,7 @@ const FeedbackButtons = ({ message }: Props) => {
       }
     } else {
       setShowFeedbackDialog(nextValue);
+      setCommentInput(comment || undefined);
     }
   };
 
@@ -118,11 +123,23 @@ const FeedbackButtons = ({ message }: Props) => {
               color="inherit"
               disabled={disabled}
               className={`positive-feedback-${feedback === 1 ? 'on' : 'off'}`}
-              onClick={() => {
-                handleFeedbackClick(1);
-              }}
+              onClick={() => handleFeedbackClick(1)}
             >
               <UpIcon sx={iconSx} />
+            </IconButton>
+          </span>
+        </Tooltip>
+      ),
+      () => (
+        <Tooltip title="Add comment">
+          <span>
+            <IconButton
+              color="inherit"
+              disabled={disabled}
+              className={`neutral-feedback-${feedback === 0 ? 'on' : 'off'}`}
+              onClick={() => handleFeedbackClick(0)}
+            >
+              <MessageBubbleIcon sx={iconSx} />
             </IconButton>
           </span>
         </Tooltip>
@@ -133,10 +150,8 @@ const FeedbackButtons = ({ message }: Props) => {
             <IconButton
               color="inherit"
               disabled={disabled}
-              className={`negative-feedback-${feedback === 0 ? 'on' : 'off'}`}
-              onClick={() => {
-                handleFeedbackClick(0);
-              }}
+              className={`negative-feedback-${feedback === -1 ? 'on' : 'off'}`}
+              onClick={() => handleFeedbackClick(-1)}
             >
               <DownIcon sx={iconSx} />
             </IconButton>
@@ -145,28 +160,8 @@ const FeedbackButtons = ({ message }: Props) => {
       )
     ];
 
-    if (comment) {
-      baseButtons.push(() => (
-        <Tooltip title="Feedback">
-          <span>
-            <IconButton
-              color="inherit"
-              disabled={disabled}
-              onClick={() => {
-                setShowFeedbackDialog(feedback);
-                setCommentInput(comment);
-              }}
-              className="feedback-comment-edit"
-            >
-              <MessageBubbleIcon sx={iconSx} />
-            </IconButton>
-          </span>
-        </Tooltip>
-      ));
-    }
-
     return baseButtons;
-  }, [feedback, comment, disabled]);
+  }, [feedback, disabled]);
 
   return (
     <>
@@ -184,8 +179,14 @@ const FeedbackButtons = ({ message }: Props) => {
         open={showFeedbackDialog !== undefined}
         title={
           <Stack direction="row" alignItems="center" gap={2}>
-            {showFeedbackDialog === 0 ? <DownIcon /> : <UpIcon />}
-            Add a comment
+            {showFeedbackDialog === -1 ? (
+              <DownIcon />
+            ) : showFeedbackDialog === 1 ? (
+              <UpIcon />
+            ) : (
+              <MessageBubbleIcon />
+            )}
+            {showFeedbackDialog === 0 ? 'Add a comment' : 'Add feedback'}
           </Stack>
         }
         content={
@@ -209,15 +210,13 @@ const FeedbackButtons = ({ message }: Props) => {
             type="submit"
             variant="outlined"
             onClick={() => {
-              if (showFeedbackDialog != null) {
-                handleFeedbackChanged(showFeedbackDialog, commentInput);
-              }
+              handleFeedbackChanged(showFeedbackDialog, commentInput);
               setShowFeedbackDialog(undefined);
               setCommentInput(undefined);
             }}
             autoFocus
           >
-            Submit feedback
+            Submit
           </AccentButton>
         }
       />
